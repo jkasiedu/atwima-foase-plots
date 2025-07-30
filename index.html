@@ -233,9 +233,12 @@ $1
             const name = feature.properties?.name || 'Unnamed Plot';
             layer.bindPopup(`<strong>${name}</strong>`);
 
-            // Autofill Plot ID in form on click
             layer.on('click', function () {
-              $1
+              const plotInput = document.getElementById('plot-id');
+              if (plotInput) {
+                plotInput.value = name;
+                plotInput.scrollIntoView({ behavior: 'smooth' });
+                alert(`Plot selected: ${name}`);
                 plotInput.classList.add('highlight');
                 const plotIcon = document.getElementById('plot-icon');
                 if (plotIcon) {
@@ -246,16 +249,14 @@ $1
                 }
                 setTimeout(() => plotInput.classList.remove('highlight'), 1000);
               }
-            }););
-              }
             });
-          }</strong>`);
           },
           style: {
             color: 'green',
             weight: 2
           }
         }).addTo(map);
+      });
       });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.141.0/build/three.min.js"></script>
