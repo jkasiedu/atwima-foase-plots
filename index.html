@@ -121,14 +121,174 @@
       border-radius: 12px;
       box-shadow: 0 2px 15px rgba(0,0,0,0.15);
     }
-    .highlight {
+  .highlight {
       box-shadow: 0 0 10px 2px #3b82f6;
       transition: box-shadow 0.3s ease;
     }
-  </style>
+$1
 </head>
 <body>
   <canvas id="globe-background"></canvas>
-  <!-- Actual body content continues... -->
+  <header class="animate__animated animate__fadeInDown">
+    <h1>Atwima Foase Plot Allocation</h1>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#plots">Available Plots</a>
+      <a href="#reserve">Reserve a Plot</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section id="home">
+    <h2>Welcome</h2>
+    <p>Explore and reserve demarcated plots easily at Atwima Foase. View real-time availability and apply directly online.</p>
+    <img src="layout.png" alt="Plot Layout at Atwima Foase" class="layout-image" style="width: 100%; max-width: none; height: auto; border: 3px solid #3b82f6; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+  </section>
+
+  <section id="plots">
+    <h2>Available Plots</h2>
+    <div id="map"></div>
+  </section>
+
+  <section id="reserve">
+    <h2>Reserve a Plot</h2>
+    <form id="reservation-form" action="https://formspree.io/f/mqallqyy" method="POST">
+      <input type="hidden" name="_subject" value="New Plot Reservation">
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="plot-id">Plot ID:</label>
+<div style="position: relative;">
+  <input type="text" id="plot-id" name="plot-id" required style="padding-right: 2.5rem;" />
+  <span id="plot-icon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #3b82f6; font-size: 1.2rem; transition: transform 0.3s ease;">📌</span>
+</div>
+
+      <label for="message">Message:</label>
+      <textarea id="message" name="message"></textarea>
+
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: <a href="mailto:jefferykwakye2@gmail.com">jefferykwakye2@gmail.com</a></p>
+    <p>Phone: +233 248030609</p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Atwima Foase Plot Management</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map');
+
+    const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    });
+
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
+
+    const baseMaps = {
+      "Street View": streetLayer,
+      "Satellite View": satelliteLayer
+    };
+
+    streetLayer.addTo(map);
+    L.control.layers(baseMaps).addTo(map);
+
+    // Automatically locate user and zoom to their location
+    map.locate({ setView: true, maxZoom: 18, watch: false });
+
+    function onLocationFound(e) {
+      const radius = e.accuracy / 2;
+
+      L.marker(e.latlng)
+        .addTo(map)
+        .bindPopup("You are here")
+        .openPopup();
+
+      L.circle(e.latlng, radius).addTo(map);
+    }
+
+    function onLocationError(e) {
+      alert(e.message);
+    }
+
+    map.on("locationfound", onLocationFound);
+    map.on("locationerror", onLocationError);
+
+    // Load GeoJSON and display plots
+    fetch('plots_atwima_foase.geojson')
+      .then(response => response.json())
+      .then(data => {
+        L.geoJSON(data, {
+          onEachFeature: function (feature, layer) {
+            const name = feature.properties?.name || 'Unnamed Plot';
+            layer.bindPopup(`<strong>${name}</strong>`);
+
+            layer.on('click', function () {
+              const plotInput = document.getElementById('plot-id');
+              if (plotInput) {
+                plotInput.value = name;
+                plotInput.scrollIntoView({ behavior: 'smooth' });
+                alert(`Plot selected: ${name}`);
+                plotInput.classList.add('highlight');
+                const plotIcon = document.getElementById('plot-icon');
+                if (plotIcon) {
+                  plotIcon.style.transform = 'translateY(-50%) scale(1.3)';
+                  setTimeout(() => {
+                    plotIcon.style.transform = 'translateY(-50%) scale(1)';
+                  }, 600);
+                }
+                setTimeout(() => plotInput.classList.remove('highlight'), 1000);
+              }
+            });
+          },
+          style: {
+            color: 'green',
+            weight: 2
+          }
+        }).addTo(map);
+      });
+        }).addTo(map);
+      });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.141.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three-globe@2.25.3/dist/three-globe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('globe-background'), alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera();
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    camera.position.z = 400;
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableZoom = false;
+    controls.enablePan = false;
+
+    const globe = new ThreeGlobe()
+      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+
+    scene.add(globe);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      globe.rotation.y += 0.0015;
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
 </body>
 </html>
