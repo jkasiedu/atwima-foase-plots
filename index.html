@@ -138,8 +138,8 @@
 
   <section id="contact">
     <h2>Contact Us</h2>
-    <p>Email: example@email.com</p>
-    <p>Phone: +233 123 456 789</p>
+    <p>Email: <a href="mailto:jefferykwakye2@gmail.com">jefferykwakye2@gmail.com</a></p>
+    <p>Phone: +233 248030609</p>
   </section>
 
   <footer>
@@ -148,29 +148,26 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map').setView([6.6307, -1.7565], 16);
+    const map = L.map('map');
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    });
 
-    fetch('plots_atwima_foase.geojson')
-      .then(response => response.json())
-      .then(data => {
-        L.geoJSON(data, {
-          onEachFeature: function (feature, layer) {
-            const name = feature.properties?.name || 'Unnamed Plot';
-            layer.bindPopup(`<strong>${name}</strong>`);
-          },
-          style: {
-            color: 'green',
-            weight: 2
-          }
-        }).addTo(map);
-      });
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
 
-    // Add user location marker
-    map.locate({ setView: true, maxZoom: 18 });
+    const baseMaps = {
+      "Street View": streetLayer,
+      "Satellite View": satelliteLayer
+    };
+
+    streetLayer.addTo(map);
+    L.control.layers(baseMaps).addTo(map);
+
+    // Automatically locate user and zoom to their location
+    map.locate({ setView: true, maxZoom: 18, watch: false });
 
     function onLocationFound(e) {
       const radius = e.accuracy / 2;
@@ -189,6 +186,22 @@
 
     map.on("locationfound", onLocationFound);
     map.on("locationerror", onLocationError);
+
+    // Load GeoJSON and display plots
+    fetch('plots_atwima_foase.geojson')
+      .then(response => response.json())
+      .then(data => {
+        L.geoJSON(data, {
+          onEachFeature: function (feature, layer) {
+            const name = feature.properties?.name || 'Unnamed Plot';
+            layer.bindPopup(`<strong>${name}</strong>`);
+          },
+          style: {
+            color: 'green',
+            weight: 2
+          }
+        }).addTo(map);
+      });
   </script>
 </body>
 </html>
