@@ -121,11 +121,11 @@
       border-radius: 12px;
       box-shadow: 0 2px 15px rgba(0,0,0,0.15);
     }
-  .highlight {
+    .highlight {
       box-shadow: 0 0 10px 2px #3b82f6;
       transition: box-shadow 0.3s ease;
     }
-$1
+  </style>
 </head>
 <body>
   <canvas id="globe-background"></canvas>
@@ -161,10 +161,10 @@ $1
       <input type="email" id="email" name="email" required />
 
       <label for="plot-id">Plot ID:</label>
-<div style="position: relative;">
-  <input type="text" id="plot-id" name="plot-id" required style="padding-right: 2.5rem;" />
-  <span id="plot-icon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #3b82f6; font-size: 1.2rem; transition: transform 0.3s ease;">📌</span>
-</div>
+      <div style="position: relative;">
+        <input type="text" id="plot-id" name="plot-id" required style="padding-right: 2.5rem;" />
+        <span id="plot-icon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #3b82f6; font-size: 1.2rem; transition: transform 0.3s ease;">📌</span>
+      </div>
 
       <label for="message">Message:</label>
       <textarea id="message" name="message"></textarea>
@@ -208,12 +208,10 @@ $1
 
     function onLocationFound(e) {
       const radius = e.accuracy / 2;
-
       L.marker(e.latlng)
         .addTo(map)
         .bindPopup("You are here")
         .openPopup();
-
       L.circle(e.latlng, radius).addTo(map);
     }
 
@@ -257,9 +255,8 @@ $1
           }
         }).addTo(map);
       });
-        }).addTo(map);
-      });
   </script>
+
   <script src="https://cdn.jsdelivr.net/npm/three@0.141.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three-globe@2.25.3/dist/three-globe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
