@@ -83,6 +83,7 @@
     };
 
     baseLayers["Street View"].addTo(map);
+
     L.control.layers(baseLayers).addTo(map);
 
     map.locate({ setView: false, watch: false });
@@ -95,7 +96,7 @@
       }).addTo(map).bindPopup("You are here").openPopup();
     });
 
-    fetch('foase.geojson')
+    fetch('foase_polygons.geojson')
       .then(res => res.json())
       .then(data => {
         const geoLayer = L.geoJSON(data, {
