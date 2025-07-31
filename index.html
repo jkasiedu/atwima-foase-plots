@@ -6,27 +6,65 @@
   <title>Atwima Foase Land Allocation</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
   <style>
-    html, body, #map {
+    html, body {
       height: 100%;
       margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e6f2ff, #ffffff);
+    }
+    #map {
+      height: 70%;
+      width: 100%;
     }
     #header {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 1000;
-      background: white;
-      padding: 8px 12px;
-      border-radius: 4px;
-      font-family: sans-serif;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      background: #0055a5;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    #form-container {
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      max-width: 400px;
+      margin: auto;
+    }
+    input, textarea, button {
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 1rem;
+    }
+    footer {
+      text-align: center;
+      padding: 10px;
+      background: #eee;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <div id="header">Atwima Foase Land Map</div>
+  <div id="header">Atwima Foase Land Allocation Map</div>
   <div id="map"></div>
+
+  <div id="form-container">
+    <h2 style="text-align:center;">Submit Your Plot Allocation Request</h2>
+    <form action="mailto:jefferykwakye2@gmail.com" method="POST" enctype="text/plain">
+      <input type="text" name="Full Name" placeholder="Full Name" required>
+      <input type="email" name="Email" placeholder="Email" required>
+      <input type="text" name="Phone" placeholder="Phone Number" required>
+      <textarea name="Message" placeholder="Enter the plot reference or description" rows="4" required></textarea>
+      <button type="submit">Submit Allocation Request</button>
+    </form>
+  </div>
+
+  <footer>
+    Contact: <a href="mailto:jefferykwakye2@gmail.com">jefferykwakye2@gmail.com</a><br>
+    Phone: +233 24 8030 609
+  </footer>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
