@@ -47,7 +47,7 @@
       font-size: 0.9rem;
     }
   </style>
-  <script src="foase_polygons.js"></script>
+  <script src="foase_polygons_cleaned.js"></script>
 </head>
 <body>
   <div id="header">Atwima Foase Land Allocation Map</div>
@@ -84,7 +84,6 @@
     };
 
     baseLayers["Street View"].addTo(map);
-
     L.control.layers(baseLayers).addTo(map);
 
     map.locate({ setView: false, watch: false });
