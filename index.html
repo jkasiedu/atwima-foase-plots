@@ -30,7 +30,7 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map').setView([6.628, -1.755], 17);
+    const map = L.map('map').setView([6.628, -1.755], 16);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data © OpenStreetMap contributors'
@@ -40,10 +40,10 @@
       .then(res => res.json())
       .then(data => {
         const geoLayer = L.geoJSON(data, {
-          style: { color: 'blue', weight: 2 },
+          style: { color: 'blue', weight: 3 },
           onEachFeature: (feature, layer) => {
             layer.on('click', () => {
-              layer.setStyle({ color: 'green' });
+              layer.setStyle({ color: 'green', weight: 4 });
             });
           }
         }).addTo(map);
