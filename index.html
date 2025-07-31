@@ -47,6 +47,7 @@
       font-size: 0.9rem;
     }
   </style>
+  <script src="foase_polygons.js"></script>
 </head>
 <body>
   <div id="header">Atwima Foase Land Allocation Map</div>
@@ -96,27 +97,16 @@
       }).addTo(map).bindPopup("You are here").openPopup();
     });
 
-    fetch('foase_polygons.geojson')
-      .then(res => {
-        if (!res.ok) throw new Error('GeoJSON not found or invalid');
-        return res.json();
-      })
-      .then(data => {
-        const geoLayer = L.geoJSON(data, {
-          style: { color: 'blue', weight: 3 },
-          onEachFeature: (feature, layer) => {
-            layer.on('click', () => {
-              layer.setStyle({ color: 'green', weight: 4 });
-              layer.bindPopup('Plot ID: ' + (feature.properties.id || 'N/A')).openPopup();
-            });
-          }
-        }).addTo(map);
-        map.fitBounds(geoLayer.getBounds());
-      })
-      .catch(err => {
-        alert("Error loading plot map: " + err.message);
-        console.error(err);
-      });
+    const geoLayer = L.geoJSON(foasePolygons, {
+      style: { color: 'blue', weight: 3 },
+      onEachFeature: (feature, layer) => {
+        layer.on('click', () => {
+          layer.setStyle({ color: 'green', weight: 4 });
+          layer.bindPopup('Plot ID: ' + (feature.properties.id || 'N/A')).openPopup();
+        });
+      }
+    }).addTo(map);
+    map.fitBounds(geoLayer.getBounds());
   </script>
 </body>
 </html>
