@@ -24,16 +24,8 @@
       background: #111827;
       color: #e5e7eb;
     }
-    #globe-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-    }
     header {
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.9);
       color: #fff;
       padding: 1rem 2rem;
       display: flex;
@@ -125,9 +117,6 @@
       margin-top: 1rem;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-    .leaflet-control-zoom {
-      display: block;
-    }
     form {
       display: flex;
       flex-direction: column;
@@ -181,7 +170,7 @@
     .layout-image {
       width: 130%;
       max-width: none;
-      transform: scale(1.4);
+      transform: scale(2);
       display: block;
       margin: 2rem auto;
       border: 2px solid #ccc;
@@ -190,17 +179,18 @@
       transition: transform 0.3s;
     }
     .layout-image:hover {
-      transform: scale(1.5);
+      transform: scale(2.2);
     }
     .highlight {
       box-shadow: 0 0 10px 2px #3b82f6;
       transition: box-shadow 0.3s ease;
     }
-    @media (max-width: 768px) {
-      .layout-image {
-        width: 100%;
-        transform: scale(1);
-      }
+    #dashboard {
+      display: none;
+      background: #e0f2fe;
+      padding: 2rem;
+      margin-top: 2rem;
+      border-radius: 12px;
     }
   </style>
 </head>
@@ -211,11 +201,25 @@
       document.body.classList.toggle('dark-mode');
     }
   </script>
+
   <section>
-    <h2>Admin Login</h2>
+    <h2>Sign Up</h2>
+    <form onsubmit="event.preventDefault(); signupUser();">
+      <label for="signup-email">Email</label>
+      <input type="email" id="signup-email" placeholder="Enter your email" required />
+
+      <label for="signup-password">Password</label>
+      <input type="password" id="signup-password" placeholder="Create a password" required />
+
+      <button type="submit">Create Account</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Login</h2>
     <form onsubmit="event.preventDefault(); loginUser();">
-      <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Enter your username" required />
+      <label for="username">Email</label>
+      <input type="email" id="username" placeholder="Enter your email" required />
 
       <label for="password">Password</label>
       <input type="password" id="password" placeholder="Enter your password" required />
@@ -224,9 +228,19 @@
     </form>
   </section>
 
+  <section id="dashboard">
+    <h2>Welcome to the Admin Dashboard</h2>
+    <p>Here you can manage plot allocations, view status updates, and perform admin actions.</p>
+    <ul>
+      <li>✔ View reserved plots</li>
+      <li>✔ Approve new plot requests</li>
+      <li>✔ Update plot status (Available, Reserved, Sold)</li>
+    </ul>
+  </section>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
@@ -238,21 +252,25 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-    async function loadPlots() {
-      const plotsSnapshot = await getDocs(collection(db, "plots"));
-      plotsSnapshot.forEach(doc => {
-        console.log(doc.id, "=>", doc.data());
-      });
+    window.signupUser = function signupUser() {
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value.trim();
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => alert("Account created successfully"))
+        .catch(error => alert(error.message));
     }
 
-    loadPlots();
-
-    function loginUser() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      alert(`Logged in as ${user}`); // Replace with secure logic later
+    window.loginUser = function loginUser() {
+      const email = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          document.getElementById('dashboard').style.display = 'block';
+          window.scrollTo({ top: document.getElementById('dashboard').offsetTop, behavior: 'smooth' });
+        })
+        .catch(error => alert(error.message));
     }
   </script>
 </body>
