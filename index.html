@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,69 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Atwima Foase Land Allocation</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
   <style>
-    body {
+    html, body {
+      height: 100%;
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #eaf4ff, #ffffff);
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e6f2ff, #ffffff);
     }
-    header {
-      background-color: #0072ce;
+    #map {
+      height: 70%;
+      width: 100%;
+    }
+    #header {
+      background: #0055a5;
       color: white;
       padding: 1rem;
       text-align: center;
-      font-size: 1.8rem;
+      font-size: 1.5rem;
     }
-    #map {
-      height: 50vh;
-      width: 100%;
-    }
-    main {
-      flex-grow: 1;
-      padding: 1rem;
+    #form-container {
+      padding: 20px;
+      background: #f9f9f9;
     }
     form {
       display: flex;
       flex-direction: column;
-      max-width: 500px;
-      margin: 1rem auto;
-      background: #fff;
-      padding: 1rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
+      max-width: 400px;
+      margin: auto;
     }
     input, textarea, button {
-      margin-bottom: 1rem;
-      padding: 0.75rem;
+      margin: 10px 0;
+      padding: 10px;
       font-size: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #0072ce;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #005fa3;
     }
     footer {
       text-align: center;
-      padding: 1rem;
-      background: #f0f0f0;
+      padding: 10px;
+      background: #eee;
       font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <header>Atwima Foase Land Allocation Map</header>
+  <div id="header">Atwima Foase Land Allocation Map</div>
   <div id="map"></div>
-  <main>
+
+  <div id="form-container">
     <h2 style="text-align:center;">Submit Your Plot Allocation Request</h2>
     <form action="mailto:jefferykwakye2@gmail.com" method="POST" enctype="text/plain">
       <input type="text" name="Full Name" placeholder="Full Name" required>
@@ -77,49 +59,29 @@
       <textarea name="Message" placeholder="Enter the plot reference or description" rows="4" required></textarea>
       <button type="submit">Submit Allocation Request</button>
     </form>
-  </main>
+  </div>
+
   <footer>
-    Contact: <a href="mailto:jefferykwakye2@gmail.com">jefferykwakye2@gmail.com</a> | Phone: +233 24 8030 609
+    Contact: <a href="mailto:jefferykwakye2@gmail.com">jefferykwakye2@gmail.com</a><br>
+    Phone: +233 24 8030 609
   </footer>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-  <script src="https://unpkg.com/leaflet-providers/leaflet-providers.js"></script>
   <script>
-    const map = L.map('map').setView([6.628, -1.755], 17);
+    const map = L.map('map').setView([6.628, -1.755], 16);
 
-    const baseLayers = {
-      "Street View": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data © OpenStreetMap contributors'
-      }),
-      "Satellite (Esri)": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'Tiles © Esri',
-        maxZoom: 20
-      })
-    };
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © OpenStreetMap contributors'
+    }).addTo(map);
 
-    baseLayers["Street View"].addTo(map);
-    L.control.layers(baseLayers).addTo(map);
-
-    map.locate({ setView: false, watch: false });
-    map.on("locationfound", function(e) {
-      L.circleMarker(e.latlng, {
-        radius: 8,
-        color: "red",
-        fillColor: "red",
-        fillOpacity: 0.8
-      }).addTo(map).bindPopup("You are here").openPopup();
-    });
-
-    fetch('foase_cleaned.geojson')
+    fetch('foase.geojson')
       .then(res => res.json())
       .then(data => {
         const geoLayer = L.geoJSON(data, {
-          style: { color: 'blue', weight: 2 },
+          style: { color: 'blue', weight: 3 },
           onEachFeature: (feature, layer) => {
             layer.on('click', () => {
-              layer.setStyle({ color: 'green', weight: 3 });
-              layer.bindPopup('Plot ID: ' + (feature.properties.id || 'N/A')).openPopup();
+              layer.setStyle({ color: 'green', weight: 4 });
             });
           }
         }).addTo(map);
