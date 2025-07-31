@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Atwima Foase Land Allocation</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
   <style>
     html, body {
       height: 100%;
@@ -14,9 +13,8 @@
       background: linear-gradient(to right, #e6f2ff, #ffffff);
     }
     #map {
-      height: 50vh;
+      height: 70%;
       width: 100%;
-      margin-bottom: 20px;
     }
     #header {
       background: #0055a5;
@@ -47,7 +45,6 @@
       font-size: 0.9rem;
     }
   </style>
-  <script src="foase_polygons_cleaned.js"></script>
 </head>
 <body>
   <div id="header">Atwima Foase Land Allocation Map</div>
@@ -70,42 +67,26 @@
   </footer>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
   <script>
     const map = L.map('map').setView([6.628, -1.755], 16);
 
-    const baseLayers = {
-      "Street View": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data © OpenStreetMap contributors'
-      }),
-      "Satellite View": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data © OpenTopoMap contributors'
-      })
-    };
-
-    baseLayers["Street View"].addTo(map);
-    L.control.layers(baseLayers).addTo(map);
-
-    map.locate({ setView: false, watch: false });
-    map.on("locationfound", function(e) {
-      L.circleMarker(e.latlng, {
-        radius: 8,
-        color: "red",
-        fillColor: "red",
-        fillOpacity: 0.8
-      }).addTo(map).bindPopup("You are here").openPopup();
-    });
-
-    const geoLayer = L.geoJSON(foasePolygons, {
-      style: { color: 'blue', weight: 3 },
-      onEachFeature: (feature, layer) => {
-        layer.on('click', () => {
-          layer.setStyle({ color: 'green', weight: 4 });
-          layer.bindPopup('Plot ID: ' + (feature.properties.id || 'N/A')).openPopup();
-        });
-      }
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © OpenStreetMap contributors'
     }).addTo(map);
-    map.fitBounds(geoLayer.getBounds());
+
+    fetch('foase.geojson')
+      .then(res => res.json())
+      .then(data => {
+        const geoLayer = L.geoJSON(data, {
+          style: { color: 'blue', weight: 3 },
+          onEachFeature: (feature, layer) => {
+            layer.on('click', () => {
+              layer.setStyle({ color: 'green', weight: 4 });
+            });
+          }
+        }).addTo(map);
+        map.fitBounds(geoLayer.getBounds());
+      });
   </script>
 </body>
 </html>
